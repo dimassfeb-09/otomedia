@@ -15,6 +15,29 @@ const STATUS_COLORS: Record<string, string> = {
   done: '#10B981',
 };
 
+export const TaskCard: React.FC<{ task: Task; onEdit: (t: Task) => void; onDelete: (id: number) => void }> = ({ task, onEdit, onDelete }) => (
+  <View style={styles.card}>
+    <View style={styles.cardHeader}>
+      <Text style={styles.title} numberOfLines={2}>{task.title}</Text>
+      <View style={[styles.badge, { backgroundColor: STATUS_COLORS[task.status] || '#64748B' }]}>
+        <Text style={styles.badgeText}>{task.status.replace('_', ' ')}</Text>
+      </View>
+    </View>
+    {task.description ? <Text style={styles.description} numberOfLines={2}>{task.description}</Text> : null}
+    <View style={styles.cardFooter}>
+      <Text style={styles.assignee}>{task.assignee || 'Unassigned'}</Text>
+      <View style={styles.actions}>
+        <TouchableOpacity style={styles.actionBtn} onPress={() => onEdit(task)} activeOpacity={0.7}>
+          <Text style={styles.editText}>Edit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionBtn} onPress={() => onDelete(task.id)} activeOpacity={0.7}>
+          <Text style={styles.deleteText}>Hapus</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+);
+
 export const TaskList: React.FC<Props> = ({ tasks, loading, onEdit, onDelete }) => {
   if (loading) {
     return (
@@ -34,33 +57,14 @@ export const TaskList: React.FC<Props> = ({ tasks, loading, onEdit, onDelete }) 
   return (
     <View style={styles.container}>
       {tasks.map((task) => (
-        <View key={task.id} style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Text style={styles.title} numberOfLines={2}>{task.title}</Text>
-            <View style={[styles.badge, { backgroundColor: STATUS_COLORS[task.status] || '#64748B' }]}>
-              <Text style={styles.badgeText}>{task.status.replace('_', ' ')}</Text>
-            </View>
-          </View>
-          {task.description ? <Text style={styles.description} numberOfLines={2}>{task.description}</Text> : null}
-          <View style={styles.cardFooter}>
-            <Text style={styles.assignee}>{task.assignee || 'Unassigned'}</Text>
-            <View style={styles.actions}>
-              <TouchableOpacity style={styles.actionBtn} onPress={() => onEdit(task)} activeOpacity={0.7}>
-                <Text style={styles.editText}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.actionBtn} onPress={() => onDelete(task.id)} activeOpacity={0.7}>
-                <Text style={styles.deleteText}>Hapus</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} />
       ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 16, paddingTop: 4 },
+  container: { paddingHorizontal: 16 },
   center: { paddingVertical: 48, alignItems: 'center' },
   loadingText: { color: '#64748B', fontSize: 15 },
   emptyTitle: { fontSize: 17, fontWeight: '600', color: '#0F172A', marginBottom: 4 },
