@@ -199,25 +199,7 @@ npm test
 
 ## 8. API
 
-Interactive API docs (Swagger UI) are available at http://localhost:8080/swagger while the backend is running. The OpenAPI spec lives in `backend/docs/openapi.yaml`.
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/tasks` | List tasks |
-| GET | `/api/tasks/:id` | Get one task |
-| POST | `/api/tasks` | Create a task |
-| PUT | `/api/tasks/:id` | Update a task |
-| DELETE | `/api/tasks/:id` | Delete a task (soft delete) |
-
-Filters for `GET /api/tasks`: `status`, `keyword`, `assignee`, `page`, `limit`, `sort` (for example `sort=created_at:desc`). Add `refresh=1` to bypass the Redis cache for that query.
-
-Error responses are always consistent:
-
-```json
-{ "error": { "code": "...", "message": "..." } }
-```
-
-A duplicate title returns HTTP 409.
+API reference: http://localhost:8080/swagger (Swagger UI) while the backend is running. The OpenAPI spec lives in `backend/docs/openapi.yaml`.
 
 ## 9. Cache (Redis)
 
