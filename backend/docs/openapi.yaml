@@ -1,0 +1,270 @@
+openapi: 3.0.3
+info:
+  title: Task Management API
+  description: REST API for managing tasks, backed by MySQL with a Redis read cache.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development
+tags:
+  - name: Tasks
+    description: Task CRUD operations
+paths:
+  /api/tasks:
+    get:
+      tags:
+        - Tasks
+      summary: List tasks
+      description: Returns a paginated list of tasks. The response is cached in Redis for 60 seconds.
+      parameters:
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            type: string
+            enum:
+              - pending
+              - in_progress
+              - done
+        - name: keyword
+          in: query
+          description: Search keyword matched against title and description
+          schema:
+            type: string
+        - name: assignee
+          in: query
+          description: Filter by assignee
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: sort
+          in: query
+          description: "Sort as column:direction, for example created_at:desc"
+          schema:
+            type: string
+            example: created_at:desc
+        - name: refresh
+          in: query
+          description: Set to 1 to bypass the Redis cache for this request
+          schema:
+            type: string
+            enum:
+              - "1"
+      responses:
+        "200":
+          description: A page of tasks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskListResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags:
+        - Tasks
+      summary: Create a task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskInput"
+      responses:
+        "201":
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /api/tasks/{id}:
+    parameters:
+      - $ref: "#/components/parameters/TaskId"
+    get:
+      tags:
+        - Tasks
+      summary: Get a task by id
+      responses:
+        "200":
+          description: The requested task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags:
+        - Tasks
+      summary: Update a task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskInput"
+      responses:
+        "200":
+          description: The updated task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags:
+        - Tasks
+      summary: Soft delete a task
+      description: Marks the task as deleted. It is then hidden from all read endpoints.
+      responses:
+        "204":
+          description: Task deleted
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+components:
+  parameters:
+    TaskId:
+      name: id
+      in: path
+      required: true
+      description: Task id
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: Setup CI
+        description:
+          type: string
+          example: Description for task 1
+        status:
+          type: string
+          enum:
+            - pending
+            - in_progress
+            - done
+          example: pending
+        assignee:
+          type: string
+          example: alice
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    TaskInput:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          example: Setup CI
+        description:
+          type: string
+          example: Description for task 1
+        status:
+          type: string
+          enum:
+            - pending
+            - in_progress
+            - done
+          default: pending
+        assignee:
+          type: string
+          example: alice
+    TaskListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+        total:
+          type: integer
+          example: 100
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: task not found
+  responses:
+    BadRequest:
+      description: Invalid request or validation error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Task not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Conflict:
+      description: A task with the same title already exists
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    InternalError:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"

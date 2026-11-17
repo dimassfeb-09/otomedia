@@ -199,6 +199,8 @@ npm test
 
 ## 8. API
 
+Interactive API docs (Swagger UI) are available at http://localhost:8080/swagger while the backend is running. The OpenAPI spec lives in `backend/docs/openapi.yaml`.
+
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/api/tasks` | List tasks |
