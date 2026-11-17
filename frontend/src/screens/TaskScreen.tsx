@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   header: { backgroundColor: '#2563EB', paddingHorizontal: 20, paddingTop: 52, paddingBottom: 24, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, marginBottom: 4 },
   headerTitle: { fontSize: 26, fontWeight: '700', color: '#FFFFFF', letterSpacing: -0.5 },
   headerSubtitle: { fontSize: 14, color: '#BFDBFE', marginTop: 4 },
-  listContent: { paddingHorizontal: 16, paddingBottom: 24 },
+  listContent: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 48 },
   loadingText: { color: '#64748B', fontSize: 15, marginTop: 8 },
   emptyTitle: { fontSize: 17, fontWeight: '600', color: '#0F172A', marginBottom: 4 },

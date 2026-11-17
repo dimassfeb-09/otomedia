@@ -8,17 +8,17 @@ interface Props {
 }
 
 /**
- * ListFooter keeps a fixed height so showing the loader never pushes the list
- * around (the cause of the jumpy "jedat-jedut" scroll). The spinner is only
- * revealed after a short delay and cross-fades in, so fast page loads and the
- * rapid onEndReached toggling don't flash it on and off.
+ * ListFooter sits at the very bottom of the list. It keeps a minimum height so
+ * the loader never pushes the list around (the cause of the jumpy scroll) and,
+ * together with a `flexGrow` content container, it is pushed to the bottom of
+ * the screen even when the list only holds a few items. The spinner is revealed
+ * only after a short delay and cross-fades in, so fast loads don't flash it.
  */
 export const ListFooter: React.FC<Props> = ({ loading, hasMore, hasItems }) => {
   const [showSpinner, setShowSpinner] = useState(false);
   const spinnerOpacity = useRef(new Animated.Value(0)).current;
   const endOpacity = useRef(new Animated.Value(0)).current;
 
-  // Only reveal the spinner if loading actually takes a moment.
   useEffect(() => {
     if (!loading) {
       setShowSpinner(false);
@@ -46,26 +46,35 @@ export const ListFooter: React.FC<Props> = ({ loading, hasMore, hasItems }) => {
     }).start();
   }, [showEnd, endOpacity]);
 
+  // Nothing to append when the list is empty; the empty state fills the screen.
+  if (!hasItems) return null;
+
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.layer, { opacity: spinnerOpacity }]} pointerEvents="none">
-        <ActivityIndicator size="small" color="#2563EB" />
-        <Text style={styles.label}>Memuat tugas lainnya…</Text>
+        <View style={styles.row}>
+          <ActivityIndicator size="small" color="#2563EB" />
+          <Text style={styles.label}>Memuat tugas lainnya…</Text>
+        </View>
       </Animated.View>
 
       <Animated.View style={[styles.layer, { opacity: endOpacity }]} pointerEvents="none">
-        <View style={styles.endLine} />
-        <Text style={styles.endText}>Tidak ada data lainnya</Text>
-        <View style={styles.endLine} />
+        <View style={styles.endRow}>
+          <View style={styles.endLine} />
+          <Text style={styles.endText}>Tidak ada data lainnya</Text>
+          <View style={styles.endLine} />
+        </View>
       </Animated.View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { height: 64, justifyContent: 'center', alignItems: 'center' },
-  layer: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 24 },
+  container: { flex: 1, minHeight: 64, justifyContent: 'flex-end', alignItems: 'center' },
+  layer: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'flex-end', alignItems: 'center', paddingHorizontal: 24, paddingBottom: 12 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   label: { color: '#94A3B8', fontSize: 12, fontWeight: '500' },
+  endRow: { flexDirection: 'row', alignItems: 'center', gap: 12, width: '100%' },
   endLine: { flex: 1, height: 1, backgroundColor: '#E2E8F0' },
   endText: { color: '#94A3B8', fontSize: 12, fontWeight: '500' },
 });
