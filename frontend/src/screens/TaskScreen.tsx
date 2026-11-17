@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTasks } from '../hooks/useTasks';
 import { Task } from '../types/task';
 import { SearchInput } from '../components/SearchInput';
@@ -38,7 +38,9 @@ export const TaskScreen: React.FC = () => {
       </View>
       <SearchInput value={keyword} onChange={setKeyword} />
       <StatusFilter value={status} onChange={setStatus} />
-      <TaskList tasks={tasks} loading={loading} onEdit={handleEdit} onDelete={handleDelete} />
+      <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
+        <TaskList tasks={tasks} loading={loading} onEdit={handleEdit} onDelete={handleDelete} />
+      </ScrollView>
       <Pagination page={page} total={total} limit={limit} onChange={setPage} />
       <EditModal visible={modalVisible} task={editing} onClose={() => setModalVisible(false)} onSave={handleSave} />
     </View>
@@ -51,4 +53,6 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
   headerSubtitle: { fontSize: 13, color: '#e0e0e0', marginTop: 2 },
   error: { color: '#dc3545', padding: 12, textAlign: 'center' },
+  list: { flex: 1 },
+  listContent: { paddingBottom: 16 },
 });
