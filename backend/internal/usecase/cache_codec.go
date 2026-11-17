@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"taskmanager/internal/domain"
-	"taskmanager/internal/repository"
 )
 
 type cachedPayload struct {
@@ -22,5 +21,3 @@ func decodeCached(b []byte) (cachedPayload, error) {
 	err := json.Unmarshal(b, &p)
 	return p, err
 }
-// ensure repository import used
-var _ repository.TaskFilter

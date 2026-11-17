@@ -11,8 +11,6 @@ import (
 	"taskmanager/internal/repository"
 )
 
-// --- mocks ---
-
 type mockRepo struct {
 	mu     sync.Mutex
 	tasks  map[int64]*domain.Task
@@ -96,8 +94,6 @@ func (m *mockRepo) List(ctx context.Context, filter repository.TaskFilter) ([]do
 		out = append(out, *t)
 	}
 	total := len(out)
-	// sort
-	// pagination
 	page := filter.Page
 	if page < 1 {
 		page = 1
@@ -132,8 +128,8 @@ func (m *mockRepo) ExistsByTitle(ctx context.Context, title string, excludeID in
 }
 
 type mockCache struct {
-	mu    sync.Mutex
-	store map[string][]byte
+	mu      sync.Mutex
+	store   map[string][]byte
 	deletes []string
 }
 
@@ -198,8 +194,6 @@ func hasPrefix(s, p string) bool {
 	return len(s) >= len(p) && s[:len(p)] == p
 }
 
-// --- tests ---
-
 func TestCreate(t *testing.T) {
 	repo := newMockRepo()
 	cache := newMockCache()
@@ -213,12 +207,10 @@ func TestCreate(t *testing.T) {
 	if task.ID == 0 || task.Title != "New Task" {
 		t.Fatalf("create failed: %+v", task)
 	}
-	// duplicate title
 	_, err = uc.Create(ctx, CreateTaskInput{Title: "New Task"})
 	if err != domain.ErrDuplicateTitle {
 		t.Fatalf("expected ErrDuplicateTitle, got %v", err)
 	}
-	// validation: empty title
 	_, err = uc.Create(ctx, CreateTaskInput{Title: "   "})
 	if err != domain.ErrValidation {
 		t.Fatalf("expected ErrValidation, got %v", err)
@@ -242,7 +234,6 @@ func TestUpdate(t *testing.T) {
 	if updated.Title != "T1-updated" || updated.Status != domain.StatusDone {
 		t.Fatalf("update not applied: %+v", updated)
 	}
-	// duplicate title on update
 	_, _ = uc.Create(ctx, CreateTaskInput{Title: "T2"})
 	_, err = uc.Update(ctx, task.ID, UpdateTaskInput{Title: "T2", Status: "done"})
 	if err != domain.ErrDuplicateTitle {
@@ -292,25 +283,20 @@ func TestCacheInvalidation(t *testing.T) {
 	ctx := context.Background()
 
 	_, _ = uc.Create(ctx, CreateTaskInput{Title: "A"})
-	// populate cache
 	_, _, _ = uc.List(ctx, repository.TaskFilter{Page: 1, Limit: 10})
 	if len(cache.store) == 0 {
 		t.Fatal("cache not populated")
 	}
-	// create should invalidate
 	_, _ = uc.Create(ctx, CreateTaskInput{Title: "B"})
 	if len(cache.store) != 0 {
 		t.Fatalf("cache not invalidated after create, remaining %d", len(cache.store))
 	}
-	// populate again
 	_, _, _ = uc.List(ctx, repository.TaskFilter{Page: 1, Limit: 10})
-	// update should invalidate
 	tasks, _, _ := uc.List(ctx, repository.TaskFilter{Page: 1, Limit: 10})
 	_, _ = uc.Update(ctx, tasks[0].ID, UpdateTaskInput{Title: "A2", Status: "pending"})
 	if len(cache.store) != 0 {
 		t.Fatalf("cache not invalidated after update")
 	}
-	// populate again then delete
 	_, _, _ = uc.List(ctx, repository.TaskFilter{Page: 1, Limit: 10})
 	tasks, _, _ = uc.List(ctx, repository.TaskFilter{Page: 1, Limit: 10})
 	_ = uc.SoftDelete(ctx, tasks[0].ID)
@@ -320,7 +306,6 @@ func TestCacheInvalidation(t *testing.T) {
 }
 
 func TestDuplicateTitleReturns409(t *testing.T) {
-	// covered by usecase returning ErrDuplicateTitle
 	repo := newMockRepo()
 	cache := newMockCache()
 	uc := NewTaskUsecase(repo, cache)

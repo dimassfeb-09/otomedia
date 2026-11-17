@@ -1,4 +1,3 @@
--- Migration: create tasks table
 CREATE TABLE IF NOT EXISTS tasks (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
@@ -9,7 +8,6 @@ CREATE TABLE IF NOT EXISTS tasks (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at DATETIME DEFAULT NULL,
     PRIMARY KEY (id),
-    -- uniqueness enforced in application layer for non-deleted rows
     KEY idx_tasks_status (status),
     KEY idx_tasks_assignee (assignee),
     KEY idx_tasks_deleted_at (deleted_at)

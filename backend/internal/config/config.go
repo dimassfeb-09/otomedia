@@ -5,9 +5,9 @@ import (
 )
 
 type Config struct {
-	MySQLDSN string
+	MySQLDSN  string
 	RedisAddr string
-	Port     string
+	Port      string
 }
 
 func Load() Config {

@@ -7,7 +7,6 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// RedisCache implements CacheRepository using Redis.
 type RedisCache struct {
 	client *redis.Client
 }

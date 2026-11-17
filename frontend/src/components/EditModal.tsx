@@ -42,9 +42,6 @@ export const EditModal: React.FC<Props> = ({ visible, task, onClose, onSave }) =
       visible={visible}
       animationType="slide"
       transparent
-      // Without these, Android draws the modal window inset by the system
-      // bars, so the very bottom (and top) of the screen keeps showing the
-      // app behind the dialog instead of the dimmed overlay.
       statusBarTranslucent
       navigationBarTranslucent
       onRequestClose={onClose}
@@ -82,8 +79,6 @@ export const EditModal: React.FC<Props> = ({ visible, task, onClose, onSave }) =
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(15,23,42,0.5)', justifyContent: 'flex-end' },
-  // Extra bottom padding keeps the action buttons clear of the Android
-  // gesture/navigation bar now that the sheet extends to the screen edge.
   card: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40 },
   heading: { fontSize: 20, fontWeight: '700', color: '#0F172A', marginBottom: 8 },
   label: { fontSize: 13, fontWeight: '600', color: '#475569', marginBottom: 6, marginTop: 10 },

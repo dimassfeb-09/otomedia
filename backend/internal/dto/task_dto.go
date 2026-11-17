@@ -2,7 +2,6 @@ package dto
 
 import "taskmanager/internal/domain"
 
-// CreateTaskRequest represents request body for creating a task.
 type CreateTaskRequest struct {
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description"`
@@ -10,7 +9,6 @@ type CreateTaskRequest struct {
 	Assignee    string `json:"assignee"`
 }
 
-// UpdateTaskRequest represents request body for updating a task.
 type UpdateTaskRequest struct {
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description"`
@@ -18,7 +16,6 @@ type UpdateTaskRequest struct {
 	Assignee    string `json:"assignee"`
 }
 
-// TaskResponse represents a task in API responses.
 type TaskResponse struct {
 	ID          int64  `json:"id"`
 	Title       string `json:"title"`
@@ -29,7 +26,6 @@ type TaskResponse struct {
 	UpdatedAt   string `json:"updated_at"`
 }
 
-// FromDomain converts domain.Task to TaskResponse.
 func FromDomain(t domain.Task) TaskResponse {
 	return TaskResponse{
 		ID:          t.ID,
@@ -42,7 +38,6 @@ func FromDomain(t domain.Task) TaskResponse {
 	}
 }
 
-// ErrorResponse represents consistent error response.
 type ErrorResponse struct {
 	Error ErrorDetail `json:"error"`
 }

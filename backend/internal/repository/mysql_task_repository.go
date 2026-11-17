@@ -10,7 +10,6 @@ import (
 	"taskmanager/internal/domain"
 )
 
-// MySQLTaskRepository implements TaskRepository using MySQL.
 type MySQLTaskRepository struct {
 	db *sql.DB
 }
@@ -81,17 +80,12 @@ func (r *MySQLTaskRepository) List(ctx context.Context, filter TaskFilter) ([]do
 	}
 	whereClause := "WHERE " + strings.Join(where, " AND ")
 
-	// count
 	var total int
 	countSQL := "SELECT COUNT(*) FROM tasks " + whereClause
 	if err := r.db.QueryRowContext(ctx, countSQL, args...).Scan(&total); err != nil {
 		return nil, 0, err
 	}
 
-	// sort. Always append the unique `id` as a tiebreaker so pagination is
-	// stable when many rows share the same created_at/updated_at (e.g. seed
-	// data inserted in the same second); without it, OFFSET paging can repeat
-	// or skip rows.
 	order := "created_at DESC, id DESC"
 	if filter.Sort != "" {
 		parts := strings.Split(filter.Sort, ":")
@@ -173,7 +167,6 @@ func scanTaskRows(rows *sql.Rows) (*domain.Task, error) {
 }
 
 func isDuplicate(err error) bool {
-	// MySQL duplicate entry error code 1062
 	if err == nil {
 		return false
 	}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { taskApi } from '../services/api';
-import { Task, TaskStatus } from '../types/task';
+import { Task } from '../types/task';
 
 export interface UseTasksState {
   tasks: Task[];
@@ -40,15 +40,12 @@ export function useTasks(initialLimit = 10): UseTasksState {
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [status, setStatus] = useState('');
 
-  // Debounce the search keyword so the list doesn't refetch on every keystroke.
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedKeyword(keyword), 300);
     return () => clearTimeout(timer);
   }, [keyword]);
 
   const fetchTasks = useCallback(async (isRefresh = false) => {
-    // A pull-to-refresh keeps the current list on screen and shows the
-    // RefreshControl spinner; a plain load shows the full-screen loader.
     if (isRefresh) {
       refreshingRef.current = true;
       setRefreshing(true);
@@ -63,7 +60,6 @@ export function useTasks(initialLimit = 10): UseTasksState {
         limit,
         keyword: debouncedKeyword,
         status,
-        // Ask the server to bypass its cache so pull-to-refresh is really fresh.
         ...(isRefresh ? { refresh: 1 } : {}),
       });
       setTasks(res.data);

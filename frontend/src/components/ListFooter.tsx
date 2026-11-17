@@ -7,13 +7,6 @@ interface Props {
   hasItems: boolean;
 }
 
-/**
- * ListFooter sits at the very bottom of the list. It keeps a minimum height so
- * the loader never pushes the list around (the cause of the jumpy scroll) and,
- * together with a `flexGrow` content container, it is pushed to the bottom of
- * the screen even when the list only holds a few items. The spinner is revealed
- * only after a short delay and cross-fades in, so fast loads don't flash it.
- */
 export const ListFooter: React.FC<Props> = ({ loading, hasMore, hasItems }) => {
   const [showSpinner, setShowSpinner] = useState(false);
   const spinnerOpacity = useRef(new Animated.Value(0)).current;
@@ -46,7 +39,6 @@ export const ListFooter: React.FC<Props> = ({ loading, hasMore, hasItems }) => {
     }).start();
   }, [showEnd, endOpacity]);
 
-  // Nothing to append when the list is empty; the empty state fills the screen.
   if (!hasItems) return null;
 
   return (

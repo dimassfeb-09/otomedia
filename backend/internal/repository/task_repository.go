@@ -6,20 +6,16 @@ import (
 	"taskmanager/internal/domain"
 )
 
-// TaskFilter holds query parameters for listing tasks.
 type TaskFilter struct {
 	Status   string
 	Keyword  string
 	Assignee string
 	Page     int
 	Limit    int
-	Sort     string // e.g. "created_at:desc"
-	// NoCache forces a fresh read (used by pull-to-refresh): the cached entry
-	// for this query is dropped before hitting the database.
-	NoCache bool
+	Sort     string
+	NoCache  bool
 }
 
-// TaskRepository defines persistence operations for tasks.
 type TaskRepository interface {
 	Create(ctx context.Context, task *domain.Task) error
 	GetByID(ctx context.Context, id int64) (*domain.Task, error)
@@ -29,7 +25,6 @@ type TaskRepository interface {
 	ExistsByTitle(ctx context.Context, title string, excludeID int64) (bool, error)
 }
 
-// CacheRepository defines cache operations.
 type CacheRepository interface {
 	Get(ctx context.Context, key string) ([]byte, error)
 	Set(ctx context.Context, key string, value []byte, ttlSeconds int) error

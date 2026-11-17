@@ -12,7 +12,6 @@ import (
 	"taskmanager/internal/usecase"
 )
 
-// TaskHandler handles HTTP requests for tasks.
 type TaskHandler struct {
 	uc *usecase.TaskUsecase
 }

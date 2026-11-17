@@ -45,8 +45,6 @@ export const TaskScreen: React.FC = () => {
 
   const keyExtractor = useCallback((item: Task) => String(item.id), []);
 
-  // Stable header element: it must not be rebuilt while loadingMore toggles,
-  // otherwise the search field and filter chips re-render on every page load.
   const listHeader = useMemo(
     () => (
       <>

@@ -27,8 +27,6 @@ export const ConfirmDialog: React.FC<Props> = ({
       visible={visible}
       transparent
       animationType="fade"
-      // Cover the system bars too, otherwise the bottom strip of the screen
-      // shows the app behind the dialog un-dimmed (Android).
       statusBarTranslucent
       navigationBarTranslucent
       onRequestClose={onCancel}

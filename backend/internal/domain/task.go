@@ -5,7 +5,6 @@ import (
 	"time"
 )
 
-// TaskStatus represents allowed task statuses.
 type TaskStatus string
 
 const (
@@ -14,7 +13,6 @@ const (
 	StatusDone       TaskStatus = "done"
 )
 
-// IsValid checks whether the status is one of the allowed values.
 func (s TaskStatus) IsValid() bool {
 	switch s {
 	case StatusPending, StatusInProgress, StatusDone:
@@ -23,7 +21,6 @@ func (s TaskStatus) IsValid() bool {
 	return false
 }
 
-// Task is the core domain entity.
 type Task struct {
 	ID          int64      `json:"id"`
 	Title       string     `json:"title"`
@@ -35,16 +32,14 @@ type Task struct {
 	DeletedAt   *time.Time `json:"deleted_at,omitempty"`
 }
 
-// IsDeleted reports whether the task has been soft-deleted.
 func (t *Task) IsDeleted() bool {
 	return t.DeletedAt != nil
 }
 
-// Domain errors.
 var (
-	ErrNotFound          = errors.New("task not found")
-	ErrDuplicateTitle    = errors.New("duplicate task title")
-	ErrInvalidStatus     = errors.New("invalid task status")
-	ErrValidation        = errors.New("validation error")
-	ErrInternal          = errors.New("internal error")
+	ErrNotFound       = errors.New("task not found")
+	ErrDuplicateTitle = errors.New("duplicate task title")
+	ErrInvalidStatus  = errors.New("invalid task status")
+	ErrValidation     = errors.New("validation error")
+	ErrInternal       = errors.New("internal error")
 )

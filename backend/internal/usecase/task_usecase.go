@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"sort"
 	"strings"
 	"time"
 
@@ -11,18 +10,15 @@ import (
 	"taskmanager/internal/repository"
 )
 
-// TaskUsecase orchestrates task business logic.
 type TaskUsecase struct {
 	repo  repository.TaskRepository
 	cache repository.CacheRepository
 }
 
-// NewTaskUsecase constructs a TaskUsecase.
 func NewTaskUsecase(repo repository.TaskRepository, cache repository.CacheRepository) *TaskUsecase {
 	return &TaskUsecase{repo: repo, cache: cache}
 }
 
-// CreateTaskInput is the input for creating a task.
 type CreateTaskInput struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -30,7 +26,6 @@ type CreateTaskInput struct {
 	Assignee    string `json:"assignee"`
 }
 
-// UpdateTaskInput is the input for updating a task.
 type UpdateTaskInput struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -141,7 +136,6 @@ func (u *TaskUsecase) SoftDelete(ctx context.Context, id int64) error {
 }
 
 func (u *TaskUsecase) List(ctx context.Context, filter repository.TaskFilter) ([]domain.Task, int, error) {
-	// normalize
 	if filter.Page < 1 {
 		filter.Page = 1
 	}
@@ -151,14 +145,11 @@ func (u *TaskUsecase) List(ctx context.Context, filter repository.TaskFilter) ([
 	if filter.Limit > 100 {
 		filter.Limit = 100
 	}
-	// cache key includes query params
 	key := cacheKey(filter)
 	if u.cache != nil {
 		if filter.NoCache {
-			// pull-to-refresh: drop this query's entry so we read fresh and re-cache.
 			_ = u.cache.Delete(ctx, key)
 		} else if b, err := u.cache.Get(ctx, key); err == nil && b != nil {
-			// cached; decode
 			cached, err := decodeCached(b)
 			if err == nil {
 				return cached.Tasks, cached.Total, nil
@@ -181,18 +172,7 @@ func (u *TaskUsecase) invalidateCache(ctx context.Context) {
 	}
 }
 
-// --- cache helpers ---
-type cachedResult struct {
-	Tasks []domain.Task
-	Total int
-}
-
 func cacheKey(f repository.TaskFilter) string {
 	return fmt.Sprintf("tasks:list:status=%s&keyword=%s&assignee=%s&page=%d&limit=%d&sort=%s",
 		f.Status, f.Keyword, f.Assignee, f.Page, f.Limit, f.Sort)
 }
-
-// We store JSON; implement encode/decode via encoding/json.
-// (defined in cache_codec.go)
-var _ = sort.Strings
-var _ = strings.TrimSpace
