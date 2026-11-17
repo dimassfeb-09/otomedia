@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Task, TaskStatus } from '../types/task';
+import { STATUS_LABELS, STATUS_OPTIONS } from '../constants/status';
 
 interface Props {
   visible: boolean;
@@ -40,18 +41,18 @@ export const EditModal: React.FC<Props> = ({ visible, task, onClose, onSave }) =
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.overlay}>
         <View style={styles.card}>
-          <Text style={styles.heading}>Edit Tugas</Text>
+          <Text style={styles.heading}>Ubah Tugas</Text>
           <Text style={styles.label}>Judul</Text>
           <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Judul tugas" placeholderTextColor="#94A3B8" testID="edit-title" />
           <Text style={styles.label}>Deskripsi</Text>
           <TextInput style={styles.input} value={description} onChangeText={setDescription} placeholder="Deskripsi" placeholderTextColor="#94A3B8" testID="edit-desc" />
-          <Text style={styles.label}>Assignee</Text>
-          <TextInput style={styles.input} value={assignee} onChangeText={setAssignee} placeholder="Nama assignee" placeholderTextColor="#94A3B8" testID="edit-assignee" />
+          <Text style={styles.label}>Penanggung Jawab</Text>
+          <TextInput style={styles.input} value={assignee} onChangeText={setAssignee} placeholder="Nama penanggung jawab" placeholderTextColor="#94A3B8" testID="edit-assignee" />
           <Text style={styles.label}>Status</Text>
           <View style={styles.statusRow}>
-            {(['pending', 'in_progress', 'done'] as TaskStatus[]).map((s) => (
+            {STATUS_OPTIONS.map((s) => (
               <TouchableOpacity key={s} style={[styles.chip, status === s && styles.active]} onPress={() => setStatus(s)} testID={`edit-status-${s}`} activeOpacity={0.8}>
-                <Text style={status === s ? styles.activeText : styles.text}>{s === 'in_progress' ? 'Proses' : s === 'done' ? 'Selesai' : 'Pending'}</Text>
+                <Text style={status === s ? styles.activeText : styles.text}>{STATUS_LABELS[s]}</Text>
               </TouchableOpacity>
             ))}
           </View>

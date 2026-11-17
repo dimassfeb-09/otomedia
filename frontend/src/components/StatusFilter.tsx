@@ -1,13 +1,11 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TaskStatus } from '../types/task';
+import { STATUS_LABELS, STATUS_OPTIONS } from '../constants/status';
 
-const OPTIONS = ['', 'pending', 'in_progress', 'done'];
-const LABELS: Record<string, string> = {
-  '': 'Semua',
-  pending: 'Pending',
-  in_progress: 'Proses',
-  done: 'Selesai',
-};
+type FilterOption = '' | TaskStatus;
+const OPTIONS: FilterOption[] = ['', ...STATUS_OPTIONS];
+const labelFor = (opt: FilterOption) => (opt === '' ? 'Semua' : STATUS_LABELS[opt]);
 
 export const StatusFilter: React.FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => {
   return (
@@ -20,7 +18,7 @@ export const StatusFilter: React.FC<{ value: string; onChange: (v: string) => vo
           testID={`status-${opt || 'all'}`}
           activeOpacity={0.8}
         >
-          <Text style={value === opt ? styles.activeText : styles.text}>{LABELS[opt]}</Text>
+          <Text style={value === opt ? styles.activeText : styles.text}>{labelFor(opt)}</Text>
         </TouchableOpacity>
       ))}
     </View>

@@ -55,7 +55,7 @@ export const ListFooter: React.FC<Props> = ({ loading, hasMore, hasItems }) => {
 
       <Animated.View style={[styles.layer, { opacity: endOpacity }]} pointerEvents="none">
         <View style={styles.endLine} />
-        <Text style={styles.endText}>Semua tugas sudah dimuat</Text>
+        <Text style={styles.endText}>Tidak ada data lainnya</Text>
         <View style={styles.endLine} />
       </Animated.View>
     </View>

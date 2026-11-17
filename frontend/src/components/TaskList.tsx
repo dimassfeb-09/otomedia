@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Task } from '../types/task';
+import { STATUS_COLORS, STATUS_LABELS } from '../constants/status';
 
 interface Props {
   tasks: Task[];
@@ -9,26 +10,20 @@ interface Props {
   onDelete: (id: number) => void;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: '#F59E0B',
-  in_progress: '#3B82F6',
-  done: '#10B981',
-};
-
 export const TaskCard: React.FC<{ task: Task; onEdit: (t: Task) => void; onDelete: (id: number) => void }> = React.memo(({ task, onEdit, onDelete }) => (
   <View style={styles.card}>
     <View style={styles.cardHeader}>
       <Text style={styles.title} numberOfLines={2}>{task.title}</Text>
       <View style={[styles.badge, { backgroundColor: STATUS_COLORS[task.status] || '#64748B' }]}>
-        <Text style={styles.badgeText}>{task.status.replace('_', ' ')}</Text>
+        <Text style={styles.badgeText}>{STATUS_LABELS[task.status] || task.status}</Text>
       </View>
     </View>
     {task.description ? <Text style={styles.description} numberOfLines={2}>{task.description}</Text> : null}
     <View style={styles.cardFooter}>
-      <Text style={styles.assignee}>{task.assignee || 'Unassigned'}</Text>
+      <Text style={styles.assignee}>{task.assignee || 'Belum ditugaskan'}</Text>
       <View style={styles.actions}>
         <TouchableOpacity style={styles.actionBtn} onPress={() => onEdit(task)} activeOpacity={0.7}>
-          <Text style={styles.editText}>Edit</Text>
+          <Text style={styles.editText}>Ubah</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionBtn} onPress={() => onDelete(task.id)} activeOpacity={0.7}>
           <Text style={styles.deleteText}>Hapus</Text>

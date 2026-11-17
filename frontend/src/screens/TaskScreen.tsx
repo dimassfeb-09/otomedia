@@ -50,7 +50,7 @@ export const TaskScreen: React.FC = () => {
     () => (
       <>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Task Manager</Text>
+          <Text style={styles.headerTitle}>Manajer Tugas</Text>
           <Text style={styles.headerSubtitle}>Kelola tugas tim Anda dengan rapi</Text>
         </View>
         <SearchInput value={keyword} onChange={setKeyword} />
