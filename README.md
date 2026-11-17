@@ -48,12 +48,16 @@ GET /api/tasks cached in Redis for 60s. Cache key includes query parameters. Inv
 cd backend && go test ./...
 ```
 
-## Frontend
+## Frontend (Expo / React Native)
 ```bash
 cd frontend
 npm install
 npm test
 npx tsc --noEmit
+npm run android   # Expo Go (butuh emulator/device)
+# atau build native:
+npx expo prebuild --platform android
+npx expo run:android
 ```
 
 Features: search input, status filter, pagination, edit modal, loading state.

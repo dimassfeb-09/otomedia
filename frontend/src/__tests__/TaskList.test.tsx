@@ -9,19 +9,19 @@ const tasks: Task[] = [
 ];
 
 describe('TaskList', () => {
-  it('renders task titles', () => {
-    const { getByText } = render(<TaskList tasks={tasks} loading={false} onEdit={() => {}} onDelete={() => {}} />);
+  it('renders task titles', async () => {
+    const { getByText } = await render(<TaskList tasks={tasks} loading={false} onEdit={() => {}} onDelete={() => {}} />);
     expect(getByText('Buy milk')).toBeTruthy();
     expect(getByText('Write code')).toBeTruthy();
   });
 
-  it('shows loading state', () => {
-    const { getByText } = render(<TaskList tasks={[]} loading={true} onEdit={() => {}} onDelete={() => {}} />);
+  it('shows loading state', async () => {
+    const { getByText } = await render(<TaskList tasks={[]} loading={true} onEdit={() => {}} onDelete={() => {}} />);
     expect(getByText('Loading...')).toBeTruthy();
   });
 
-  it('shows empty state', () => {
-    const { getByText } = render(<TaskList tasks={[]} loading={false} onEdit={() => {}} onDelete={() => {}} />);
+  it('shows empty state', async () => {
+    const { getByText } = await render(<TaskList tasks={[]} loading={false} onEdit={() => {}} onDelete={() => {}} />);
     expect(getByText('No tasks found')).toBeTruthy();
   });
 });
