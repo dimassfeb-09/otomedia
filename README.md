@@ -1,0 +1,64 @@
+# Task Management Fullstack App
+
+## Stack
+- Backend: Go (Gin), MySQL, Redis
+- Frontend: React Native, TypeScript
+
+## Project Structure
+```
+backend/   # Go clean architecture
+frontend/  # React Native clean architecture
+```
+
+## Backend
+
+### Run
+```bash
+cd backend
+go mod tidy
+go run ./cmd/server
+```
+
+Environment variables:
+- `MYSQL_DSN` (default: root:password@tcp(localhost:3306)/taskmanager?parseTime=true)
+- `REDIS_ADDR` (default: localhost:6379)
+- `PORT` (default: 8080)
+
+### Database Migration
+Run `backend/migrations/001_create_tasks.sql` against MySQL, or use docker-compose which auto-loads it.
+
+### API
+- `GET /api/tasks` — list with filters: `status`, `keyword`, `assignee`, `page`, `limit`, `sort`
+- `GET /api/tasks/:id`
+- `POST /api/tasks`
+- `PUT /api/tasks/:id`
+- `DELETE /api/tasks/:id` (soft delete)
+
+Error responses are consistent:
+```json
+{ "error": { "code": "...", "message": "..." } }
+```
+Duplicate title returns HTTP 409.
+
+### Cache
+GET /api/tasks cached in Redis for 60s. Cache key includes query parameters. Invalidated on create/update/delete.
+
+### Tests
+```bash
+cd backend && go test ./...
+```
+
+## Frontend
+```bash
+cd frontend
+npm install
+npm test
+npx tsc --noEmit
+```
+
+Features: search input, status filter, pagination, edit modal, loading state.
+
+## Docker
+```bash
+docker compose up -d
+```
