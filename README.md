@@ -1,5 +1,7 @@
 # Task Management Fullstack App
 
+> Panduan lengkap langkah demi langkah (clone, install, migration, Docker, manual, env, testing): lihat [SETUP.md](SETUP.md).
+
 ## Stack
 - Backend: Go (Gin), MySQL, Redis
 - Frontend: React Native, TypeScript
