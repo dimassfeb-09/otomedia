@@ -61,7 +61,13 @@ export const TaskScreen: React.FC = () => {
         <StatusFilter value={status} onChange={setStatus} />
         <TaskList tasks={tasks} loading={loading} onEdit={handleEdit} onDelete={handleDelete} />
         {loadingMore ? <ActivityIndicator style={styles.loader} color="#2563EB" /> : null}
-        {!hasMore && tasks.length > 0 ? <Text style={styles.endText}>Semua tugas sudah dimuat</Text> : null}
+        {!hasMore && tasks.length > 0 ? (
+          <View style={styles.endWrap}>
+            <View style={styles.endLine} />
+            <Text style={styles.endText}>Semua tugas sudah dimuat</Text>
+            <View style={styles.endLine} />
+          </View>
+        ) : null}
       </ScrollView>
       <EditModal visible={modalVisible} task={editing} onClose={() => setModalVisible(false)} onSave={handleSave} />
       <ConfirmDialog
@@ -83,5 +89,7 @@ const styles = StyleSheet.create({
   content: { flex: 1 },
   contentContainer: { paddingTop: 12, paddingBottom: 24 },
   loader: { marginVertical: 16 },
-  endText: { textAlign: 'center', color: '#94A3B8', fontSize: 12, paddingVertical: 12 },
+  endWrap: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 24, paddingVertical: 16, gap: 12 },
+  endLine: { flex: 1, height: 1, backgroundColor: '#E2E8F0' },
+  endText: { color: '#94A3B8', fontSize: 12, fontWeight: '500' },
 });
