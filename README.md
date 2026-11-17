@@ -214,6 +214,26 @@ The migration files live in `backend/migrations/`:
 
 Run them manually (see section 4), or let docker-compose apply them automatically.
 
+## CI/CD
+
+This repo uses GitHub Actions.
+
+- **CI** (`.github/workflows/ci.yml`) runs on every push and pull request:
+  - Backend: `gofmt` check, `go vet`, `go build`, `go test` (with `-race`).
+  - Frontend: `npm ci`, `npx tsc --noEmit`, `npm test`.
+- **CD** (`.github/workflows/cd.yml`) runs on version tags (`v*`) or manually from the Actions tab:
+  - Builds the backend Docker image from `backend/Dockerfile` and pushes it to GitHub Container Registry (`ghcr.io/<owner>/<repo>/backend`).
+  - Exports the app bundle as a downloadable artifact.
+
+Typical flow: open a pull request → CI runs. Merge and push a tag such as `v1.0.0` → CD builds and publishes.
+
+The backend image can also be built locally:
+
+```bash
+docker build -t taskmanager-backend ./backend
+docker run -p 8080:8080 -e MYSQL_DSN="..." -e REDIS_ADDR="host.docker.internal:6379" taskmanager-backend
+```
+
 ## Troubleshooting
 
 - Backend cannot reach MySQL → check `docker ps`, make sure the MySQL container is running, and confirm the credentials in `MYSQL_DSN` are correct.
