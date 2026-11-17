@@ -60,7 +60,7 @@ export const TaskList: React.FC<Props> = ({ tasks, loading, onEdit, onDelete }) 
 };
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 16 },
+  container: { paddingHorizontal: 16, paddingTop: 4 },
   center: { paddingVertical: 48, alignItems: 'center' },
   loadingText: { color: '#64748B', fontSize: 15 },
   emptyTitle: { fontSize: 17, fontWeight: '600', color: '#0F172A', marginBottom: 4 },

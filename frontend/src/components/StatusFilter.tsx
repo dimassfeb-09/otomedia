@@ -28,7 +28,7 @@ export const StatusFilter: React.FC<{ value: string; onChange: (v: string) => vo
 };
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12, paddingVertical: 4, gap: 8 },
+  row: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12, paddingVertical: 4, paddingBottom: 12, gap: 8 },
   chip: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 999, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E2E8F0' },
   active: { backgroundColor: '#2563EB', borderColor: '#2563EB' },
   text: { color: '#475569', fontSize: 13, fontWeight: '500' },
