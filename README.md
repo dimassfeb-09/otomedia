@@ -9,8 +9,6 @@ Fitur: daftar tugas dengan search, filter status, pagination (infinite scroll), 
 - Backend: Go (Gin), MySQL, Redis
 - Frontend: React Native, Expo, TypeScript
 
-> Catatan: frontend project ini memakai **Expo / React Native**, bukan Flutter.
-
 ## Struktur Project
 
 ```
