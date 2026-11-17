@@ -41,13 +41,17 @@ export const EditModal: React.FC<Props> = ({ visible, task, onClose, onSave }) =
       <View style={styles.overlay}>
         <View style={styles.card}>
           <Text style={styles.heading}>Edit Task</Text>
-          <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Title" testID="edit-title" />
-          <TextInput style={styles.input} value={description} onChangeText={setDescription} placeholder="Description" testID="edit-desc" />
-          <TextInput style={styles.input} value={assignee} onChangeText={setAssignee} placeholder="Assignee" testID="edit-assignee" />
+          <Text style={styles.label}>Judul</Text>
+          <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Judul tugas" testID="edit-title" />
+          <Text style={styles.label}>Deskripsi</Text>
+          <TextInput style={styles.input} value={description} onChangeText={setDescription} placeholder="Deskripsi" testID="edit-desc" />
+          <Text style={styles.label}>Assignee</Text>
+          <TextInput style={styles.input} value={assignee} onChangeText={setAssignee} placeholder="Nama assignee" testID="edit-assignee" />
+          <Text style={styles.label}>Status</Text>
           <View style={styles.statusRow}>
             {(['pending', 'in_progress', 'done'] as TaskStatus[]).map((s) => (
               <TouchableOpacity key={s} style={[styles.chip, status === s && styles.active]} onPress={() => setStatus(s)} testID={`edit-status-${s}`}>
-                <Text style={status === s ? styles.activeText : styles.text}>{s}</Text>
+                <Text style={status === s ? styles.activeText : styles.text}>{s === 'in_progress' ? 'In Progress' : s.charAt(0).toUpperCase() + s.slice(1)}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -69,6 +73,7 @@ const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', padding: 16 },
   card: { backgroundColor: '#fff', borderRadius: 12, padding: 16 },
   heading: { fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
+  label: { fontSize: 13, fontWeight: '600', color: '#444', marginBottom: 4, marginTop: 6 },
   input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, marginBottom: 8 },
   statusRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 },
   chip: { padding: 8, margin: 4, borderRadius: 16, backgroundColor: '#eee' },

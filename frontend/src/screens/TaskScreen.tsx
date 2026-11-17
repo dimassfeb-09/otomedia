@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTasks } from '../hooks/useTasks';
 import { Task } from '../types/task';
 import { SearchInput } from '../components/SearchInput';
@@ -32,6 +32,10 @@ export const TaskScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Task Manager</Text>
+        <Text style={styles.headerSubtitle}>Kelola tugas tim Anda</Text>
+      </View>
       <SearchInput value={keyword} onChange={setKeyword} />
       <StatusFilter value={status} onChange={setStatus} />
       <TaskList tasks={tasks} loading={loading} onEdit={handleEdit} onDelete={handleDelete} />
@@ -42,5 +46,8 @@ export const TaskScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: '#f5f7fa' },
+  header: { backgroundColor: '#007bff', padding: 20, paddingTop: 48 },
+  headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
+  headerSubtitle: { fontSize: 13, color: '#e0e0e0', marginTop: 2 },
 });

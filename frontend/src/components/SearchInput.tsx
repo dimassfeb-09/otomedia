@@ -20,5 +20,5 @@ export const SearchInput: React.FC<Props> = ({ value, onChange, placeholder = 'S
 };
 
 const styles = StyleSheet.create({
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, margin: 8 },
+  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, padding: 12, marginHorizontal: 12, marginVertical: 8, backgroundColor: '#fff' },
 });

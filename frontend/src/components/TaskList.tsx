@@ -41,7 +41,7 @@ export const TaskList: React.FC<Props> = ({ tasks, loading, onEdit, onDelete }) 
 const styles = StyleSheet.create({
   loading: { padding: 16, textAlign: 'center' },
   empty: { padding: 16, textAlign: 'center', color: '#666' },
-  item: { flexDirection: 'row', justifyContent: 'space-between', padding: 12, borderBottomWidth: 1, borderColor: '#eee' },
+  item: { flexDirection: 'row', justifyContent: 'space-between', padding: 14, marginHorizontal: 12, marginVertical: 6, borderRadius: 10, backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
   info: { flex: 1 },
   title: { fontWeight: 'bold' },
   meta: { color: '#666', fontSize: 12 },

@@ -2,6 +2,12 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 const OPTIONS = ['', 'pending', 'in_progress', 'done'];
+const LABELS: Record<string, string> = {
+  '': 'Semua',
+  pending: 'Pending',
+  in_progress: 'In Progress',
+  done: 'Done',
+};
 
 interface Props {
   value: string;
@@ -18,7 +24,7 @@ export const StatusFilter: React.FC<Props> = ({ value, onChange }) => {
           onPress={() => onChange(opt)}
           testID={`status-${opt || 'all'}`}
         >
-          <Text style={value === opt ? styles.activeText : styles.text}>{opt || 'All'}</Text>
+          <Text style={value === opt ? styles.activeText : styles.text}>{LABELS[opt]}</Text>
         </TouchableOpacity>
       ))}
     </View>
