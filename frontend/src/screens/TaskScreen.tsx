@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
 import { useTasks } from '../hooks/useTasks';
 import { Task } from '../types/task';
 import { SearchInput } from '../components/SearchInput';
@@ -10,8 +10,8 @@ import { ListFooter } from '../components/ListFooter';
 
 export const TaskScreen: React.FC = () => {
   const {
-    tasks, loading, loadingMore, hasMore, keyword, status,
-    setKeyword, setStatus, update, remove, loadMore,
+    tasks, loading, loadingMore, refreshing, hasMore, keyword, status,
+    setKeyword, setStatus, update, remove, loadMore, refresh,
   } = useTasks();
 
   const [editing, setEditing] = useState<Task | null>(null);
@@ -87,6 +87,15 @@ export const TaskScreen: React.FC = () => {
             <Text style={styles.emptyTitle}>Belum ada tugas</Text>
             <Text style={styles.emptySubtitle}>Tambahkan tugas baru untuk memulai</Text>
           </View>
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refresh}
+            tintColor="#2563EB"
+            colors={['#2563EB']}
+            progressBackgroundColor="#FFFFFF"
+          />
         }
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}

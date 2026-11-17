@@ -9,6 +9,7 @@ export interface UseTasksState {
   limit: number;
   loading: boolean;
   loadingMore: boolean;
+  refreshing: boolean;
   hasMore: boolean;
   error: string | null;
   keyword: string;
@@ -31,6 +32,8 @@ export function useTasks(initialLimit = 10): UseTasksState {
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadingMoreRef = useRef(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const refreshingRef = useRef(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
@@ -43,19 +46,38 @@ export function useTasks(initialLimit = 10): UseTasksState {
     return () => clearTimeout(timer);
   }, [keyword]);
 
-  const fetchTasks = useCallback(async () => {
-    setLoading(true);
+  const fetchTasks = useCallback(async (isRefresh = false) => {
+    // A pull-to-refresh keeps the current list on screen and shows the
+    // RefreshControl spinner; a plain load shows the full-screen loader.
+    if (isRefresh) {
+      refreshingRef.current = true;
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     setError(null);
     setPage(1);
     try {
-      const res = await taskApi.list({ page: 1, limit, keyword: debouncedKeyword, status });
+      const res = await taskApi.list({
+        page: 1,
+        limit,
+        keyword: debouncedKeyword,
+        status,
+        // Ask the server to bypass its cache so pull-to-refresh is really fresh.
+        ...(isRefresh ? { refresh: 1 } : {}),
+      });
       setTasks(res.data);
       setTotal(res.total);
       setHasMore(res.data.length >= limit && res.data.length < res.total);
     } catch (e: any) {
       setError(e.message || 'Failed to load tasks');
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        refreshingRef.current = false;
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
     }
   }, [limit, debouncedKeyword, status]);
 
@@ -64,7 +86,7 @@ export function useTasks(initialLimit = 10): UseTasksState {
   }, [fetchTasks]);
 
   const loadMore = useCallback(async () => {
-    if (loading || loadingMoreRef.current || !hasMore) return;
+    if (loading || refreshingRef.current || loadingMoreRef.current || !hasMore) return;
     loadingMoreRef.current = true;
     setLoadingMore(true);
     try {
@@ -87,7 +109,8 @@ export function useTasks(initialLimit = 10): UseTasksState {
   }, [loading, hasMore, tasks.length, limit, debouncedKeyword, status]);
 
   const refresh = useCallback(() => {
-    fetchTasks();
+    if (refreshingRef.current) return;
+    fetchTasks(true);
   }, [fetchTasks]);
 
   const create = useCallback(async (input: Partial<Task>) => {
@@ -106,7 +129,7 @@ export function useTasks(initialLimit = 10): UseTasksState {
   }, [fetchTasks]);
 
   return {
-    tasks, total, page, limit, loading, loadingMore, hasMore, error, keyword, status,
+    tasks, total, page, limit, loading, loadingMore, refreshing, hasMore, error, keyword, status,
     setPage, setKeyword, setStatus, refresh, loadMore, create, update, remove,
   };
 }

@@ -14,6 +14,9 @@ type TaskFilter struct {
 	Page     int
 	Limit    int
 	Sort     string // e.g. "created_at:desc"
+	// NoCache forces a fresh read (used by pull-to-refresh): the cached entry
+	// for this query is dropped before hitting the database.
+	NoCache bool
 }
 
 // TaskRepository defines persistence operations for tasks.

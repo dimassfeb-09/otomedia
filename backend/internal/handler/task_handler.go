@@ -122,6 +122,7 @@ func (h *TaskHandler) List(c *gin.Context) {
 		Page:     page,
 		Limit:    limit,
 		Sort:     c.Query("sort"),
+		NoCache:  c.Query("refresh") == "1",
 	}
 	tasks, total, err := h.uc.List(c.Request.Context(), filter)
 	if err != nil {

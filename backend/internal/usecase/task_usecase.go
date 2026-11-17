@@ -154,7 +154,10 @@ func (u *TaskUsecase) List(ctx context.Context, filter repository.TaskFilter) ([
 	// cache key includes query params
 	key := cacheKey(filter)
 	if u.cache != nil {
-		if b, err := u.cache.Get(ctx, key); err == nil && b != nil {
+		if filter.NoCache {
+			// pull-to-refresh: drop this query's entry so we read fresh and re-cache.
+			_ = u.cache.Delete(ctx, key)
+		} else if b, err := u.cache.Get(ctx, key); err == nil && b != nil {
 			// cached; decode
 			cached, err := decodeCached(b)
 			if err == nil {
