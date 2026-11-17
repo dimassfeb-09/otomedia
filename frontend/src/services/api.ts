@@ -1,6 +1,10 @@
+import { Platform } from 'react-native';
 import { Task, TaskListResponse, CreateTaskInput } from '../types/task';
 
-const BASE_URL = process.env.API_URL || 'http://localhost:8080';
+// Android emulator mengakses host machine via 10.0.2.2.
+// Untuk device fisik, ganti dengan IP komputer Anda.
+const HOST = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
+const BASE_URL = `http://${HOST}:8080`;
 
 export async function apiRequest<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
