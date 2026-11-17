@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import { useTasks } from '../hooks/useTasks';
 import { Task } from '../types/task';
 import { SearchInput } from '../components/SearchInput';
@@ -26,8 +26,11 @@ export const TaskScreen: React.FC = () => {
     await update(id, data);
   };
 
-  const handleDelete = async (id: number) => {
-    await remove(id);
+  const handleDelete = (id: number) => {
+    Alert.alert('Hapus Tugas', 'Apakah Anda yakin ingin menghapus tugas ini?', [
+      { text: 'Batal', style: 'cancel' },
+      { text: 'Hapus', style: 'destructive', onPress: () => remove(id) },
+    ]);
   };
 
   return (
