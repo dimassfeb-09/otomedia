@@ -36,11 +36,9 @@ To view the app:
 ## 1. Clone the repo
 
 ```bash
-git clone <REPO_URL>
-cd Otomedia
+git clone https://github.com/dimassfeb-09/otomedia.git
+cd otomedia
 ```
-
-Replace `<REPO_URL>` with your repository URL.
 
 ## 2. Run MySQL + Redis (Docker, fastest way)
 
