@@ -40,27 +40,27 @@ export const EditModal: React.FC<Props> = ({ visible, task, onClose, onSave }) =
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.overlay}>
         <View style={styles.card}>
-          <Text style={styles.heading}>Edit Task</Text>
+          <Text style={styles.heading}>Edit Tugas</Text>
           <Text style={styles.label}>Judul</Text>
-          <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Judul tugas" testID="edit-title" />
+          <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Judul tugas" placeholderTextColor="#94A3B8" testID="edit-title" />
           <Text style={styles.label}>Deskripsi</Text>
-          <TextInput style={styles.input} value={description} onChangeText={setDescription} placeholder="Deskripsi" testID="edit-desc" />
+          <TextInput style={styles.input} value={description} onChangeText={setDescription} placeholder="Deskripsi" placeholderTextColor="#94A3B8" testID="edit-desc" />
           <Text style={styles.label}>Assignee</Text>
-          <TextInput style={styles.input} value={assignee} onChangeText={setAssignee} placeholder="Nama assignee" testID="edit-assignee" />
+          <TextInput style={styles.input} value={assignee} onChangeText={setAssignee} placeholder="Nama assignee" placeholderTextColor="#94A3B8" testID="edit-assignee" />
           <Text style={styles.label}>Status</Text>
           <View style={styles.statusRow}>
             {(['pending', 'in_progress', 'done'] as TaskStatus[]).map((s) => (
-              <TouchableOpacity key={s} style={[styles.chip, status === s && styles.active]} onPress={() => setStatus(s)} testID={`edit-status-${s}`}>
-                <Text style={status === s ? styles.activeText : styles.text}>{s === 'in_progress' ? 'In Progress' : s.charAt(0).toUpperCase() + s.slice(1)}</Text>
+              <TouchableOpacity key={s} style={[styles.chip, status === s && styles.active]} onPress={() => setStatus(s)} testID={`edit-status-${s}`} activeOpacity={0.8}>
+                <Text style={status === s ? styles.activeText : styles.text}>{s === 'in_progress' ? 'Proses' : s === 'done' ? 'Selesai' : 'Pending'}</Text>
               </TouchableOpacity>
             ))}
           </View>
           <View style={styles.actions}>
-            <TouchableOpacity onPress={onClose} testID="edit-cancel">
-              <Text style={styles.link}>Cancel</Text>
+            <TouchableOpacity onPress={onClose} testID="edit-cancel" style={styles.cancelBtn} activeOpacity={0.7}>
+              <Text style={styles.cancelText}>Batal</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleSave} disabled={saving} testID="edit-save">
-              <Text style={styles.link}>{saving ? 'Saving...' : 'Save'}</Text>
+            <TouchableOpacity onPress={handleSave} disabled={saving} testID="edit-save" style={styles.saveBtn} activeOpacity={0.7}>
+              <Text style={styles.saveText}>{saving ? 'Menyimpan...' : 'Simpan'}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -70,16 +70,19 @@ export const EditModal: React.FC<Props> = ({ visible, task, onClose, onSave }) =
 };
 
 const styles = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', padding: 16 },
-  card: { backgroundColor: '#fff', borderRadius: 12, padding: 16 },
-  heading: { fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
-  label: { fontSize: 13, fontWeight: '600', color: '#444', marginBottom: 4, marginTop: 6 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, marginBottom: 8 },
-  statusRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 },
-  chip: { padding: 8, margin: 4, borderRadius: 16, backgroundColor: '#eee' },
-  active: { backgroundColor: '#007bff' },
-  text: { color: '#333' },
-  activeText: { color: '#fff' },
-  actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 16 },
-  link: { color: '#007bff', padding: 8 },
+  overlay: { flex: 1, backgroundColor: 'rgba(15,23,42,0.5)', justifyContent: 'flex-end' },
+  card: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 32 },
+  heading: { fontSize: 20, fontWeight: '700', color: '#0F172A', marginBottom: 8 },
+  label: { fontSize: 13, fontWeight: '600', color: '#475569', marginBottom: 6, marginTop: 10 },
+  input: { borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 10, padding: 12, fontSize: 15, color: '#0F172A', backgroundColor: '#F8FAFC' },
+  statusRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 4 },
+  chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: '#F1F5F9' },
+  active: { backgroundColor: '#2563EB' },
+  text: { color: '#475569', fontSize: 13, fontWeight: '500' },
+  activeText: { color: '#FFFFFF', fontSize: 13, fontWeight: '600' },
+  actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 12, marginTop: 20 },
+  cancelBtn: { paddingHorizontal: 18, paddingVertical: 10, borderRadius: 10 },
+  cancelText: { color: '#64748B', fontSize: 14, fontWeight: '600' },
+  saveBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10, backgroundColor: '#2563EB' },
+  saveText: { color: '#FFFFFF', fontSize: 14, fontWeight: '600' },
 });

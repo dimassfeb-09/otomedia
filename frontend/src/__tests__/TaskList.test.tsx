@@ -17,11 +17,11 @@ describe('TaskList', () => {
 
   it('shows loading state', async () => {
     const { getByText } = await render(<TaskList tasks={[]} loading={true} onEdit={() => {}} onDelete={() => {}} />);
-    expect(getByText('Loading...')).toBeTruthy();
+    expect(getByText('Memuat tugas...')).toBeTruthy();
   });
 
   it('shows empty state', async () => {
     const { getByText } = await render(<TaskList tasks={[]} loading={false} onEdit={() => {}} onDelete={() => {}} />);
-    expect(getByText('No tasks found')).toBeTruthy();
+    expect(getByText('Belum ada tugas')).toBeTruthy();
   });
 });

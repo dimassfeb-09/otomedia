@@ -8,6 +8,8 @@ export interface UseTasksState {
   page: number;
   limit: number;
   loading: boolean;
+  loadingMore: boolean;
+  hasMore: boolean;
   error: string | null;
   keyword: string;
   status: string;
@@ -15,6 +17,7 @@ export interface UseTasksState {
   setKeyword: (k: string) => void;
   setStatus: (s: string) => void;
   refresh: () => void;
+  loadMore: () => void;
   create: (input: Partial<Task>) => Promise<void>;
   update: (id: number, input: Partial<Task>) => Promise<void>;
   remove: (id: number) => Promise<void>;
@@ -26,6 +29,8 @@ export function useTasks(initialLimit = 10): UseTasksState {
   const [page, setPage] = useState(1);
   const [limit] = useState(initialLimit);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
   const [status, setStatus] = useState('');
@@ -33,20 +38,39 @@ export function useTasks(initialLimit = 10): UseTasksState {
   const fetchTasks = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setPage(1);
     try {
-      const res = await taskApi.list({ page, limit, keyword, status });
+      const res = await taskApi.list({ page: 1, limit, keyword, status });
       setTasks(res.data);
       setTotal(res.total);
+      setHasMore(res.data.length >= limit && res.data.length < res.total);
     } catch (e: any) {
       setError(e.message || 'Failed to load tasks');
     } finally {
       setLoading(false);
     }
-  }, [page, limit, keyword, status]);
+  }, [limit, keyword, status]);
 
   useEffect(() => {
     fetchTasks();
   }, [fetchTasks]);
+
+  const loadMore = useCallback(async () => {
+    if (loading || loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = Math.floor(tasks.length / limit) + 1;
+      const res = await taskApi.list({ page: nextPage, limit, keyword, status });
+      setTasks((prev) => [...prev, ...res.data]);
+      setTotal(res.total);
+      setHasMore(res.data.length >= limit && tasks.length + res.data.length < res.total);
+      setPage(nextPage);
+    } catch (e: any) {
+      setError(e.message || 'Failed to load more');
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loading, loadingMore, hasMore, tasks.length, limit, keyword, status]);
 
   const refresh = useCallback(() => {
     fetchTasks();
@@ -68,7 +92,7 @@ export function useTasks(initialLimit = 10): UseTasksState {
   }, [fetchTasks]);
 
   return {
-    tasks, total, page, limit, loading, error, keyword, status,
-    setPage, setKeyword, setStatus, refresh, create, update, remove,
+    tasks, total, page, limit, loading, loadingMore, hasMore, error, keyword, status,
+    setPage, setKeyword, setStatus, refresh, loadMore, create, update, remove,
   };
 }
