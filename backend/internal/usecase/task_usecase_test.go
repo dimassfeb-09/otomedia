@@ -200,6 +200,31 @@ func hasPrefix(s, p string) bool {
 
 // --- tests ---
 
+func TestCreate(t *testing.T) {
+	repo := newMockRepo()
+	cache := newMockCache()
+	uc := NewTaskUsecase(repo, cache)
+	ctx := context.Background()
+
+	task, err := uc.Create(ctx, CreateTaskInput{Title: "New Task", Status: "pending", Assignee: "alice"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if task.ID == 0 || task.Title != "New Task" {
+		t.Fatalf("create failed: %+v", task)
+	}
+	// duplicate title
+	_, err = uc.Create(ctx, CreateTaskInput{Title: "New Task"})
+	if err != domain.ErrDuplicateTitle {
+		t.Fatalf("expected ErrDuplicateTitle, got %v", err)
+	}
+	// validation: empty title
+	_, err = uc.Create(ctx, CreateTaskInput{Title: "   "})
+	if err != domain.ErrValidation {
+		t.Fatalf("expected ErrValidation, got %v", err)
+	}
+}
+
 func TestUpdate(t *testing.T) {
 	repo := newMockRepo()
 	cache := newMockCache()
