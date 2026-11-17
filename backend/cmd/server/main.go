@@ -6,6 +6,7 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 
@@ -38,6 +39,7 @@ func main() {
 	h := handler.NewTaskHandler(uc)
 
 	r := gin.Default()
+	r.Use(cors.Default())
 	api := r.Group("/api")
 	{
 		tasks := api.Group("/tasks")

@@ -50,4 +50,5 @@ const styles = StyleSheet.create({
   header: { backgroundColor: '#007bff', padding: 20, paddingTop: 48 },
   headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
   headerSubtitle: { fontSize: 13, color: '#e0e0e0', marginTop: 2 },
+  error: { color: '#dc3545', padding: 12, textAlign: 'center' },
 });
