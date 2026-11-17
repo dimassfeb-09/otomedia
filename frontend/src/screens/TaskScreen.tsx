@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { useTasks } from '../hooks/useTasks';
 import { Task } from '../types/task';
@@ -6,10 +6,11 @@ import { SearchInput } from '../components/SearchInput';
 import { StatusFilter } from '../components/StatusFilter';
 import { TaskCard } from '../components/TaskList';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { ListFooter } from '../components/ListFooter';
 
 export const TaskScreen: React.FC = () => {
   const {
-    tasks, total, loading, loadingMore, hasMore, keyword, status,
+    tasks, loading, loadingMore, hasMore, keyword, status,
     setKeyword, setStatus, update, remove, loadMore,
   } = useTasks();
 
@@ -39,30 +40,30 @@ export const TaskScreen: React.FC = () => {
 
   const renderItem = useCallback(({ item }: { item: Task }) => (
     <TaskCard task={item} onEdit={handleEdit} onDelete={handleDelete} />
-  ), []);
+  ), [handleEdit, handleDelete]);
 
   const keyExtractor = useCallback((item: Task) => String(item.id), []);
 
-  const ListHeader = (
-    <>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Task Manager</Text>
-        <Text style={styles.headerSubtitle}>Kelola tugas tim Anda dengan rapi</Text>
-      </View>
-      <SearchInput value={keyword} onChange={setKeyword} />
-      <StatusFilter value={status} onChange={setStatus} />
-    </>
+  // Stable header element: it must not be rebuilt while loadingMore toggles,
+  // otherwise the search field and filter chips re-render on every page load.
+  const listHeader = useMemo(
+    () => (
+      <>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Task Manager</Text>
+          <Text style={styles.headerSubtitle}>Kelola tugas tim Anda dengan rapi</Text>
+        </View>
+        <SearchInput value={keyword} onChange={setKeyword} />
+        <StatusFilter value={status} onChange={setStatus} />
+      </>
+    ),
+    [keyword, status, setKeyword, setStatus],
   );
 
-  const ListFooter = loadingMore ? (
-    <ActivityIndicator style={styles.loader} color="#2563EB" />
-  ) : !hasMore && tasks.length > 0 ? (
-    <View style={styles.endWrap}>
-      <View style={styles.endLine} />
-      <Text style={styles.endText}>Semua tugas sudah dimuat</Text>
-      <View style={styles.endLine} />
-    </View>
-  ) : undefined;
+  const listFooter = useMemo(
+    () => <ListFooter loading={loadingMore} hasMore={hasMore} hasItems={tasks.length > 0} />,
+    [loadingMore, hasMore, tasks.length],
+  );
 
   if (loading && tasks.length === 0) {
     return (
@@ -79,8 +80,8 @@ export const TaskScreen: React.FC = () => {
         data={tasks}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        ListHeaderComponent={ListHeader}
-        ListFooterComponent={ListFooter}
+        ListHeaderComponent={listHeader}
+        ListFooterComponent={listFooter}
         ListEmptyComponent={
           <View style={styles.center}>
             <Text style={styles.emptyTitle}>Belum ada tugas</Text>
@@ -88,7 +89,11 @@ export const TaskScreen: React.FC = () => {
           </View>
         }
         onEndReached={loadMore}
-        onEndReachedThreshold={0.4}
+        onEndReachedThreshold={0.5}
+        initialNumToRender={8}
+        maxToRenderPerBatch={8}
+        updateCellsBatchingPeriod={50}
+        windowSize={7}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />
@@ -113,8 +118,4 @@ const styles = StyleSheet.create({
   loadingText: { color: '#64748B', fontSize: 15, marginTop: 8 },
   emptyTitle: { fontSize: 17, fontWeight: '600', color: '#0F172A', marginBottom: 4 },
   emptySubtitle: { fontSize: 13, color: '#64748B' },
-  loader: { marginVertical: 16 },
-  endWrap: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 16, gap: 12 },
-  endLine: { flex: 1, height: 1, backgroundColor: '#E2E8F0' },
-  endText: { color: '#94A3B8', fontSize: 12, fontWeight: '500' },
 });

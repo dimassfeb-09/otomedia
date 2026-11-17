@@ -34,14 +34,21 @@ export function useTasks(initialLimit = 10): UseTasksState {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [status, setStatus] = useState('');
+
+  // Debounce the search keyword so the list doesn't refetch on every keystroke.
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedKeyword(keyword), 300);
+    return () => clearTimeout(timer);
+  }, [keyword]);
 
   const fetchTasks = useCallback(async () => {
     setLoading(true);
     setError(null);
     setPage(1);
     try {
-      const res = await taskApi.list({ page: 1, limit, keyword, status });
+      const res = await taskApi.list({ page: 1, limit, keyword: debouncedKeyword, status });
       setTasks(res.data);
       setTotal(res.total);
       setHasMore(res.data.length >= limit && res.data.length < res.total);
@@ -50,7 +57,7 @@ export function useTasks(initialLimit = 10): UseTasksState {
     } finally {
       setLoading(false);
     }
-  }, [limit, keyword, status]);
+  }, [limit, debouncedKeyword, status]);
 
   useEffect(() => {
     fetchTasks();
@@ -62,7 +69,7 @@ export function useTasks(initialLimit = 10): UseTasksState {
     setLoadingMore(true);
     try {
       const nextPage = Math.floor(tasks.length / limit) + 1;
-      const res = await taskApi.list({ page: nextPage, limit, keyword, status });
+      const res = await taskApi.list({ page: nextPage, limit, keyword: debouncedKeyword, status });
       setTasks((prev) => {
         const existing = new Set(prev.map((t) => t.id));
         const next = res.data.filter((t) => !existing.has(t.id));
@@ -77,7 +84,7 @@ export function useTasks(initialLimit = 10): UseTasksState {
       loadingMoreRef.current = false;
       setLoadingMore(false);
     }
-  }, [loading, hasMore, tasks.length, limit, keyword, status]);
+  }, [loading, hasMore, tasks.length, limit, debouncedKeyword, status]);
 
   const refresh = useCallback(() => {
     fetchTasks();
