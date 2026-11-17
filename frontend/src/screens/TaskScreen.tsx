@@ -17,25 +17,25 @@ export const TaskScreen: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
-  const handleEdit = (task: Task) => {
+  const handleEdit = useCallback((task: Task) => {
     setEditing(task);
     setModalVisible(true);
-  };
+  }, []);
 
-  const handleSave = async (id: number, data: Partial<Task>) => {
+  const handleSave = useCallback(async (id: number, data: Partial<Task>) => {
     await update(id, data);
-  };
+  }, [update]);
 
-  const handleDelete = (id: number) => {
+  const handleDelete = useCallback((id: number) => {
     setPendingDeleteId(id);
-  };
+  }, []);
 
-  const confirmDelete = async () => {
+  const confirmDelete = useCallback(async () => {
     if (pendingDeleteId !== null) {
       await remove(pendingDeleteId);
       setPendingDeleteId(null);
     }
-  };
+  }, [pendingDeleteId, remove]);
 
   const renderItem = useCallback(({ item }: { item: Task }) => (
     <TaskCard task={item} onEdit={handleEdit} onDelete={handleDelete} />

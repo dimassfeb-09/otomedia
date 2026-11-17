@@ -15,7 +15,7 @@ const STATUS_COLORS: Record<string, string> = {
   done: '#10B981',
 };
 
-export const TaskCard: React.FC<{ task: Task; onEdit: (t: Task) => void; onDelete: (id: number) => void }> = ({ task, onEdit, onDelete }) => (
+export const TaskCard: React.FC<{ task: Task; onEdit: (t: Task) => void; onDelete: (id: number) => void }> = React.memo(({ task, onEdit, onDelete }) => (
   <View style={styles.card}>
     <View style={styles.cardHeader}>
       <Text style={styles.title} numberOfLines={2}>{task.title}</Text>
@@ -36,7 +36,7 @@ export const TaskCard: React.FC<{ task: Task; onEdit: (t: Task) => void; onDelet
       </View>
     </View>
   </View>
-);
+));
 
 export const TaskList: React.FC<Props> = ({ tasks, loading, onEdit, onDelete }) => {
   if (loading) {
