@@ -20,15 +20,15 @@ go run ./cmd/server
 ```
 
 Environment variables:
-- `MYSQL_DSN` (default: root:password@tcp(localhost:3306)/taskmanager?parseTime=true)
+- `MYSQL_DSN` (default: root:password@tcp(localhost:3306)/taskmanager?parseTime=true&multiStatements=true)
 - `REDIS_ADDR` (default: localhost:6379)
 - `PORT` (default: 8080)
 
 ### Database Migration
-Run `backend/migrations/001_create_tasks.sql` against MySQL, or use docker-compose which auto-loads it.
+Run the files in `backend/migrations/` against MySQL (`001_create_tasks.sql` creates the schema, `002_seed_tasks.sql` seeds sample rows), or use docker-compose which auto-loads the whole folder.
 
 ### API
-- `GET /api/tasks` — list with filters: `status`, `keyword`, `assignee`, `page`, `limit`, `sort`
+- `GET /api/tasks` — list with filters: `status`, `keyword`, `assignee`, `page`, `limit`, `sort` (e.g. `sort=created_at:desc`). Pass `refresh=1` to bypass the Redis cache for this query.
 - `GET /api/tasks/:id`
 - `POST /api/tasks`
 - `PUT /api/tasks/:id`
