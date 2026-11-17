@@ -1,85 +1,85 @@
 # Task Management Fullstack App
 
-Aplikasi manajemen tugas (task manager). Backend API memakai Go + Gin dengan MySQL dan Redis, frontend memakai React Native + Expo + TypeScript.
+A task management app. The backend API is built with Go + Gin backed by MySQL and Redis, and the frontend is React Native + Expo + TypeScript.
 
-Fitur: daftar tugas dengan search, filter status, pagination (infinite scroll), ubah tugas (edit modal), hapus dengan konfirmasi, pull-to-refresh, dan loading state.
+Features: task list with search, status filter, pagination (infinite scroll), edit modal, delete with confirmation, pull-to-refresh, and loading states.
 
-## Teknologi
+## Stack
 
 - Backend: Go (Gin), MySQL, Redis
 - Frontend: React Native, Expo, TypeScript
 
-## Struktur Project
+## Project Structure
 
 ```
-backend/   # API Go (clean architecture: domain, usecase, repository, handler, dto)
-frontend/  # Aplikasi React Native (Expo)
+backend/   # Go API (clean architecture: domain, usecase, repository, handler, dto)
+frontend/  # React Native app (Expo)
 ```
 
-## Yang perlu disiapkan dulu
+## Prerequisites
 
-Wajib:
+Required:
 
 - Git
-- Go versi 1.26 atau lebih baru — https://go.dev/dl
-- Node.js versi 20 atau lebih baru (sudah termasuk npm) — https://nodejs.org
+- Go 1.26 or newer — https://go.dev/dl
+- Node.js 20 or newer (npm included) — https://nodejs.org
 
-Opsional (pilih salah satu):
+Optional (pick one):
 
-- Docker Desktop — https://www.docker.com/products/docker-desktop (cara paling gampang, MySQL + Redis langsung jadi)
-- Atau install MySQL 8 dan Redis manual kalau tidak mau pakai Docker
+- Docker Desktop — https://www.docker.com/products/docker-desktop (easiest way to get MySQL + Redis running)
+- Or install MySQL 8 and Redis manually if you prefer not to use Docker
 
-Untuk melihat aplikasinya:
+To view the app:
 
-- Android Emulator, atau aplikasi Expo Go di HP
+- An Android Emulator, or the Expo Go app on your phone
 
-## 1. Clone repo
+## 1. Clone the repo
 
 ```bash
-git clone <URL_REPO>
+git clone <REPO_URL>
 cd Otomedia
 ```
 
-Ganti `<URL_REPO>` dengan URL repo Anda.
+Replace `<REPO_URL>` with your repository URL.
 
-## 2. Jalankan MySQL + Redis (cara Docker, paling cepat)
+## 2. Run MySQL + Redis (Docker, fastest way)
 
-Dari folder paling atas repo (yang ada `docker-compose.yml`):
+From the repo root (where `docker-compose.yml` lives):
 
 ```bash
 docker compose up -d
 ```
 
-Yang terjadi otomatis:
+What happens automatically:
 
-- MySQL jalan di port `3306`, database `taskmanager` langsung dibuat
-- Migration di folder `backend/migrations/` ikut dijalankan otomatis (tabel + data contoh)
-- Redis jalan di port `6379`
+- MySQL runs on port `3306`, the `taskmanager` database is created
+- The migrations in `backend/migrations/` are applied automatically (schema + sample data)
+- Redis runs on port `6379`
 
-Cek sudah jalan:
+Check that they are running:
 
 ```bash
 docker ps
 ```
 
-Lihat log MySQL:
+Follow the MySQL logs:
 
 ```bash
 docker compose logs -f mysql
 ```
 
-Kalau mau mengulang dari bersih (hapus datanya juga):
+To start over from scratch (this also deletes the data):
 
 ```bash
 docker compose down -v
 docker compose up -d
 ```
 
-> Migration hanya otomatis jalan saat volume masih kosong (pertama kali). Kalau volume sudah ada, jalankan migration manual (lihat bagian 4).
+The migrations only run automatically the first time the volume is empty. If the volume already exists, run the migrations manually (see section 4).
 
-## 3. Jalankan backend
+## 3. Run the backend
 
-Buka terminal baru:
+Open a new terminal:
 
 ```bash
 cd backend
@@ -87,25 +87,25 @@ go mod download
 go run ./cmd/server
 ```
 
-Kalau sukses, server jalan di: http://localhost:8080
+If it starts successfully, the server listens on http://localhost:8080
 
-Tes cepat:
+Quick check:
 
 ```bash
 curl http://localhost:8080/api/tasks
 ```
 
-## 4. Cara manual (tanpa Docker)
+## 4. Manual setup (without Docker)
 
-Kalau MySQL dan Redis sudah diinstall sendiri:
+If MySQL and Redis are already installed locally:
 
-1. Buat databasenya:
+1. Create the database:
 
    ```bash
    mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS taskmanager;"
    ```
 
-2. Jalankan migration-nya.
+2. Run the migrations.
 
    macOS / Linux / Git Bash:
 
@@ -114,33 +114,33 @@ Kalau MySQL dan Redis sudah diinstall sendiri:
    mysql -u root -p taskmanager < backend/migrations/002_seed_tasks.sql
    ```
 
-   Windows PowerShell (tanda `<` tidak jalan di PowerShell):
+   Windows PowerShell (the `<` operator does not work in PowerShell):
 
    ```powershell
    Get-Content backend/migrations/001_create_tasks.sql | mysql -u root -p taskmanager
    Get-Content backend/migrations/002_seed_tasks.sql | mysql -u root -p taskmanager
    ```
 
-3. Pastikan Redis jalan (perintahnya tergantung cara install Anda, misalnya `redis-server`).
+3. Make sure Redis is running (the command depends on how you installed it, for example `redis-server`).
 
-4. Set environment variable sesuai kredensial Anda (lihat bagian 5), lalu:
+4. Set the environment variables to match your credentials (see section 5), then:
 
    ```bash
    cd backend
    go run ./cmd/server
    ```
 
-## 5. Environment variable backend
+## 5. Backend environment variables
 
-Semua punya nilai default, jadi tidak wajib diisi kalau setup Anda standar.
+All of them have defaults, so you only need to set them if your setup differs.
 
-| Variable | Default | Keterangan |
+| Variable | Default | Description |
 |---|---|---|
-| `MYSQL_DSN` | `root:password@tcp(localhost:3306)/taskmanager?parseTime=true&multiStatements=true` | Koneksi ke MySQL |
-| `REDIS_ADDR` | `localhost:6379` | Alamat Redis |
-| `PORT` | `8080` | Port server |
+| `MYSQL_DSN` | `root:password@tcp(localhost:3306)/taskmanager?parseTime=true&multiStatements=true` | MySQL connection |
+| `REDIS_ADDR` | `localhost:6379` | Redis address |
+| `PORT` | `8080` | Server port |
 
-Cara set kalau perlu diubah.
+How to set them if needed.
 
 Windows PowerShell:
 
@@ -160,9 +160,9 @@ export PORT="8080"
 go run ./cmd/server
 ```
 
-## 6. Jalankan frontend
+## 6. Run the frontend
 
-Buka terminal baru:
+Open a new terminal:
 
 ```bash
 cd frontend
@@ -170,17 +170,17 @@ npm install
 npm start
 ```
 
-Setelah muncul menu Expo, tekan `a` untuk membuka di Android Emulator, atau scan QR code pakai app Expo Go di HP.
+Once the Expo menu appears, press `a` to open it on the Android Emulator, or scan the QR code with the Expo Go app on your phone.
 
-Hubungkan frontend ke backend:
+Connect the frontend to the backend:
 
-- Android Emulator: `localhost` di dalam emulator itu emulator sendiri, bukan komputer Anda. Jalankan ini dulu supaya nyambung ke backend:
+- Android Emulator: `localhost` inside the emulator refers to the emulator itself, not your computer. Run this first so it can reach the backend:
 
   ```bash
   adb reverse tcp:8080 tcp:8080
   ```
 
-- HP fisik: ganti `HOST` di `frontend/src/services/api.ts` dari `localhost` menjadi IP LAN komputer Anda (misal `192.168.1.10`), dan pastikan HP dan komputer satu WiFi.
+- Physical phone: change `HOST` in `frontend/src/services/api.ts` from `localhost` to your computer's LAN IP (for example `192.168.1.10`), and make sure the phone and computer are on the same Wi-Fi.
 
 ## 7. Testing
 
@@ -201,39 +201,39 @@ npm test
 
 ## 8. API
 
-| Method | Endpoint | Fungsi |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/tasks` | Ambil daftar tugas |
-| GET | `/api/tasks/:id` | Ambil satu tugas |
-| POST | `/api/tasks` | Tambah tugas |
-| PUT | `/api/tasks/:id` | Ubah tugas |
-| DELETE | `/api/tasks/:id` | Hapus tugas (soft delete) |
+| GET | `/api/tasks` | List tasks |
+| GET | `/api/tasks/:id` | Get one task |
+| POST | `/api/tasks` | Create a task |
+| PUT | `/api/tasks/:id` | Update a task |
+| DELETE | `/api/tasks/:id` | Delete a task (soft delete) |
 
-Filter untuk `GET /api/tasks`: `status`, `keyword`, `assignee`, `page`, `limit`, `sort` (contoh `sort=created_at:desc`). Tambahkan `refresh=1` untuk melewati cache Redis pada query tersebut.
+Filters for `GET /api/tasks`: `status`, `keyword`, `assignee`, `page`, `limit`, `sort` (for example `sort=created_at:desc`). Add `refresh=1` to bypass the Redis cache for that query.
 
-Response error selalu konsisten:
+Error responses are always consistent:
 
 ```json
 { "error": { "code": "...", "message": "..." } }
 ```
 
-Judul duplikat mengembalikan HTTP 409.
+A duplicate title returns HTTP 409.
 
 ## 9. Cache (Redis)
 
-`GET /api/tasks` di-cache di Redis selama 60 detik. Key cache menyertakan query parameter. Cache dihapus (invalidated) setiap kali ada create, update, atau delete.
+`GET /api/tasks` is cached in Redis for 60 seconds. The cache key includes the query parameters. The cache is invalidated on every create, update, or delete.
 
 ## 10. Database Migration
 
-File migration ada di `backend/migrations/`:
+The migration files live in `backend/migrations/`:
 
-- `001_create_tasks.sql` — membuat tabel
-- `002_seed_tasks.sql` — mengisi data contoh
+- `001_create_tasks.sql` — creates the table
+- `002_seed_tasks.sql` — inserts sample data
 
-Jalankan manual (lihat bagian 4), atau biarkan docker-compose menjalankannya otomatis.
+Run them manually (see section 4), or let docker-compose apply them automatically.
 
-## Ada masalah?
+## Troubleshooting
 
-- Backend tidak nyambung ke MySQL → cek `docker ps`, pastikan container MySQL jalan dan kredensial di `MYSQL_DSN` benar.
-- Aplikasi menampilkan error koneksi → pastikan backend jalan di port `8080` dan `adb reverse tcp:8080 tcp:8080` sudah dijalankan (untuk emulator).
-- Perubahan data tidak langsung muncul → data di-cache Redis selama 60 detik; tunggu sebentar atau tarik layar ke bawah (pull-to-refresh).
+- Backend cannot reach MySQL → check `docker ps`, make sure the MySQL container is running, and confirm the credentials in `MYSQL_DSN` are correct.
+- The app shows a connection error → make sure the backend runs on port `8080` and that `adb reverse tcp:8080 tcp:8080` has been run (for the emulator).
+- Data changes do not show up immediately → data is cached in Redis for 60 seconds; wait a moment or pull down to refresh.
