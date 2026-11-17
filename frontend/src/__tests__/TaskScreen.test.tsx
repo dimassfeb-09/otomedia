@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, screen } from '@testing-library/react-native';
 import { TaskScreen } from '../screens/TaskScreen';
 import { taskApi } from '../services/api';
 
@@ -29,11 +29,11 @@ describe('TaskScreen', () => {
   });
 
   it('opens the edit dialog when pressing Ubah', async () => {
-    const { getByText, findByText } = await render(<TaskScreen />);
-    await findByText('Buy milk');
+    await render(<TaskScreen />);
+    await screen.findByText('Buy milk');
 
-    fireEvent.press(getByText('Ubah'));
+    await fireEvent.press(screen.getByText('Ubah'));
 
-    await waitFor(() => expect(getByText('Ubah Tugas')).toBeTruthy());
+    expect(await screen.findByText('Ubah Tugas')).toBeTruthy();
   });
 });
