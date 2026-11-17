@@ -6,6 +6,7 @@ import { SearchInput } from '../components/SearchInput';
 import { StatusFilter } from '../components/StatusFilter';
 import { TaskCard } from '../components/TaskList';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { EditModal } from '../components/EditModal';
 import { ListFooter } from '../components/ListFooter';
 
 export const TaskScreen: React.FC = () => {
@@ -105,6 +106,12 @@ export const TaskScreen: React.FC = () => {
         windowSize={7}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+      />
+      <EditModal
+        visible={modalVisible}
+        task={editing}
+        onClose={() => setModalVisible(false)}
+        onSave={handleSave}
       />
       <ConfirmDialog
         visible={pendingDeleteId !== null}
