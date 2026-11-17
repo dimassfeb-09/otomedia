@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { useTasks } from '../hooks/useTasks';
 import { Task } from '../types/task';
 import { SearchInput } from '../components/SearchInput';
@@ -16,6 +17,7 @@ export const TaskScreen: React.FC = () => {
 
   const [editing, setEditing] = useState<Task | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   const handleEdit = (task: Task) => {
     setEditing(task);
@@ -27,10 +29,14 @@ export const TaskScreen: React.FC = () => {
   };
 
   const handleDelete = (id: number) => {
-    Alert.alert('Hapus Tugas', 'Apakah Anda yakin ingin menghapus tugas ini?', [
-      { text: 'Batal', style: 'cancel' },
-      { text: 'Hapus', style: 'destructive', onPress: () => remove(id) },
-    ]);
+    setPendingDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (pendingDeleteId !== null) {
+      await remove(pendingDeleteId);
+      setPendingDeleteId(null);
+    }
   };
 
   return (
@@ -58,6 +64,13 @@ export const TaskScreen: React.FC = () => {
         {!hasMore && tasks.length > 0 ? <Text style={styles.endText}>Semua tugas sudah dimuat</Text> : null}
       </ScrollView>
       <EditModal visible={modalVisible} task={editing} onClose={() => setModalVisible(false)} onSave={handleSave} />
+      <ConfirmDialog
+        visible={pendingDeleteId !== null}
+        title="Hapus Tugas"
+        message="Apakah Anda yakin ingin menghapus tugas ini? Tindakan ini tidak dapat dibatalkan."
+        onConfirm={confirmDelete}
+        onCancel={() => setPendingDeleteId(null)}
+      />
     </View>
   );
 };
